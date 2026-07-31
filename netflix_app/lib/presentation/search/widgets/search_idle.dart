@@ -1,0 +1,77 @@
+import 'package:flutter/material.dart';
+
+// Landscape image for wide thumbnail display
+const imageUrl =
+    "https://media.themoviedb.org/t/p/w440_and_h660_face/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg";
+
+class SearchIdleWidgets extends StatelessWidget {
+  const SearchIdleWidgets({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Top Searches",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Expanded(
+          child: ListView.separated(
+            shrinkWrap: true,
+            itemBuilder: (ctx, index) => const TopSearchItemTile(),
+            separatorBuilder: (ctx, index) => const SizedBox(height: 10),
+            itemCount: 10,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+// Tile widget for each search item
+class TopSearchItemTile extends StatelessWidget {
+  const TopSearchItemTile({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    return Row(
+      children: [
+        Container(
+          width: screenWidth * 0.35,
+          height: 70,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(5),
+            image: const DecorationImage(
+              fit: BoxFit.cover,
+              image: NetworkImage(imageUrl),
+            ),
+          ),
+        ),
+        const SizedBox(width: 10),
+        const Expanded(
+          child: Text(
+            "Movie Name",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+        ),
+        const Icon(
+          Icons.play_circle_outline,
+          color: Colors.white,
+          size: 35,
+        ),
+      ],
+    );
+  }
+}

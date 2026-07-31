@@ -12,6 +12,7 @@ class AppBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
+      
       children: [
         // Used title variable here instead of hardcoded text
         Text(
