@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+
 
 // Landscape image for wide thumbnail display
 const imageUrl =
@@ -73,5 +75,17 @@ class TopSearchItemTile extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+
+void checkConnection() async {
+  try {
+    final result = await InternetAddress.lookup('media.themoviedb.org');
+    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+      print('Internet connected!');
+    }
+  } on SocketException catch (_) {
+    print('No internet connection on emulator');
   }
 }

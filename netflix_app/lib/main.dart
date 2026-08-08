@@ -24,7 +24,10 @@ class MyApp extends StatelessWidget {
           bodyMedium: TextStyle(color: Colors.white),
         )
       ),
-      home: ScreenMainPage(),
+      home: ScreenHome(),
     );
   }
+}
+
+class ScreenMainPage {
 }
