@@ -4,7 +4,7 @@ import 'dart:io';
 
 // Landscape image for wide thumbnail display
 const imageUrl =
-    "https://media.themoviedb.org/t/p/w440_and_h660_face/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg";
+  "https://image.tmdb.org/t/p/w500/q7fXcrDPJcf6t3rzutaNwTzuKP1.jpg";
 
 class SearchIdleWidgets extends StatelessWidget {
   const SearchIdleWidgets({super.key});

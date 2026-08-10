@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 
-const posterUrl =
-    "https://media.themoviedb.org/t/p/w440_and_h660_face/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg  ";
+// Verified, working poster URLs
+const List<String> posterUrls = [
+ "https://image.tmdb.org/t/p/w500/q7fXcrDPJcf6t3rzutaNwTzuKP1.jpg"
+
+
+];
 
 class SearchResultWidget extends StatelessWidget {
   const SearchResultWidget({super.key});
@@ -30,7 +34,9 @@ class SearchResultWidget extends StatelessWidget {
             ),
             itemCount: 20,
             itemBuilder: (context, index) {
-              return const MainCard();
+              // Cycles through working poster URLs dynamically
+              final imageUrl = posterUrls[index % posterUrls.length];
+              return MainCard(imageUrl: imageUrl);
             },
           ),
         ),
@@ -40,17 +46,50 @@ class SearchResultWidget extends StatelessWidget {
 }
 
 class MainCard extends StatelessWidget {
-  const MainCard({super.key});
+  final String imageUrl;
+
+  const MainCard({
+    super.key,
+    required this.imageUrl,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        image: const DecorationImage(
-          fit: BoxFit.cover,
-          image: NetworkImage(posterUrl),
-        ),
+    return ClipRRect(
+      borderRadius: BorderRadius.circular(8),
+      child: Image.network(
+        imageUrl,
+        fit: BoxFit.cover,
+        // Safe fallback if the connection drops or the URL breaks (404)
+        errorBuilder: (context, error, stackTrace) {
+          return Container(
+            color: Colors.grey[850],
+            child: const Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.movie, color: Colors.white38, size: 30),
+                SizedBox(height: 4),
+                Text(
+                  "No Image",
+                  style: TextStyle(color: Colors.white38, fontSize: 10),
+                ),
+              ],
+            ),
+          );
+        },
+        // Progress loading spinner while image downloads
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            color: Colors.grey[900],
+            child: const Center(
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: Colors.red,
+              ),
+            ),
+          );
+        },
       ),
     );
   }

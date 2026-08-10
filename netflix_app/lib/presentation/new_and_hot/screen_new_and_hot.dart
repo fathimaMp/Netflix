@@ -34,40 +34,35 @@ class ScreenNewAndHot extends StatelessWidget {
             const SizedBox(width: 10),
           ],
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(50),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: TabBar(
-                isScrollable: true,
-                labelColor: Colors.black,
-                unselectedLabelColor: Colors.white,
-                labelStyle: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
-                indicator: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
-                ),
-                dividerColor: Colors.transparent,
-                tabAlignment: TabAlignment.start,
-                tabs: const [
-                  Tab(text: "🍿 Coming Soon"),
-                  Tab(text: "👀 Everyone's Watching"),
-                ],
-              ),
-            ),
-          ),
-        ),
+  preferredSize: const Size.fromHeight(50),
+  child: Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 10),
+    child: TabBar(
+      isScrollable: false, // Spreads tabs evenly across full screen width
+      indicatorSize: TabBarIndicatorSize.tab, // Extends white pill to fill each tab
+      labelColor: Colors.black,
+      unselectedLabelColor: Colors.white,
+      labelStyle: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+      ),
+      indicator: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(30),
+      ),
+      dividerColor: Colors.transparent,
+      tabs: const [
+        Tab(text: "🍿 Coming Soon"),
+        Tab(text: "👀 Everyone's Watching"),
+      ],
+    ),
+  ),
+),
+         ),
         body: const TabBarView(
           children: [
             _ComingSoonList(),
-            Center(
-              child: Text(
-                "Everyone's Watching List",
-                style: TextStyle(color: Colors.white),
-              ),
-            ),
+            _EveryonesWatchingList(), // Replaced placeholder with the new list
           ],
         ),
       ),
@@ -87,6 +82,154 @@ class _ComingSoonList extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         return const _ComingSoonWidget();
       },
+    );
+  }
+}
+
+// --- Everyone's Watching List Builder ---
+class _EveryonesWatchingList extends StatelessWidget {
+  const _EveryonesWatchingList();
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      padding: const EdgeInsets.all(10),
+      itemCount: 5,
+      itemBuilder: (BuildContext context, int index) {
+        return const _EveryonesWatchingWidget();
+      },
+    );
+  }
+}
+
+// --- Individual Everyone's Watching Widget Layout ---
+class _EveryonesWatchingWidget extends StatelessWidget {
+  const _EveryonesWatchingWidget();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Video/Image Thumbnail
+        Stack(
+          children: [
+            Container(
+              width: double.infinity,
+              height: 200,
+              decoration: const BoxDecoration(
+                image: DecorationImage(
+                  image: NetworkImage(
+                      "https://image.tmdb.org/t/p/w500/q7fXcrDPJcf6t3rzutaNwTzuKP1.jpg"
+
+
+
+), // Placeholder image
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 10,
+              right: 10,
+              child: CircleAvatar(
+                backgroundColor: Colors.black.withOpacity(0.5),
+                radius: 20,
+                child: const Icon(
+                  Icons.volume_off,
+                  color: Colors.white,
+                  size: 20,
+                ),
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 15),
+        
+        // Logo & Actions Row
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            // Left Side Logo (Using Text as Placeholder for the Lost In Space logo)
+            const Text(
+              "LOST IN\nSPACE",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 4,
+                color: Colors.white,
+                height: 1.1,
+              ),
+            ),
+            
+            // Right Side Actions
+            const Row(
+              children: [
+                _CustomActionWidget(
+                  icon: Icons.send,
+                  title: "Share",
+                ),
+                SizedBox(width: 25),
+                _CustomActionWidget(
+                  icon: Icons.add,
+                  title: "My List",
+                ),
+                SizedBox(width: 25),
+                _CustomActionWidget(
+                  icon: Icons.play_arrow,
+                  title: "Play",
+                ),
+                SizedBox(width: 10),
+              ],
+            )
+          ],
+        ),
+        const SizedBox(height: 15),
+
+        // Netflix Series Badge
+        Row(
+          children: [
+            Image.network(
+              'https://pngimg.com/uploads/netflix/netflix_PNG25.png',
+              width: 15,
+              height: 15,
+            ),
+            const SizedBox(width: 5),
+            const Text(
+              "S E R I E S",
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 2,
+                color: Colors.grey,
+              ),
+            )
+          ],
+        ),
+        const SizedBox(height: 8),
+
+        // Main Title
+        const Text(
+          "Lost in Space",
+          style: TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 8),
+
+        // Description
+        const Text(
+          "After crash-landing on an alien planet, the Robinson family fights against all odds to survive and escape.",
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 14,
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: 40), // Spacing before the next item
+      ],
     );
   }
 }
@@ -141,7 +284,7 @@ class _ComingSoonWidget extends StatelessWidget {
                     decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: NetworkImage(
-                            "https://image.tmdb.org/t/p/w500/kDp1vUBnMpeYrA3SuCM1L322R3z.jpg"), // Replace with actual image
+                            "https://image.tmdb.org/t/p/w500/q7fXcrDPJcf6t3rzutaNwTzuKP1.jpg"), 
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -164,10 +307,10 @@ class _ComingSoonWidget extends StatelessWidget {
               const SizedBox(height: 15),
               
               // Title Image/Text & Actions Row
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     "TALL GIRL 2",
                     style: TextStyle(
                       fontSize: 35,
@@ -182,12 +325,12 @@ class _ComingSoonWidget extends StatelessWidget {
                         icon: Icons.notifications_none,
                         title: "Remind Me",
                       ),
-                      const SizedBox(width: 20),
+                      SizedBox(width: 20),
                       _CustomActionWidget(
                         icon: Icons.info_outline,
                         title: "Info",
                       ),
-                      const SizedBox(width: 10),
+                      SizedBox(width: 10),
                     ],
                   )
                 ],
@@ -255,7 +398,7 @@ class _ComingSoonWidget extends StatelessWidget {
   }
 }
 
-// --- Helper Widget for Actions (Remind Me / Info) ---
+// --- Helper Widget for Actions (Remind Me / Info / Share / Play) ---
 class _CustomActionWidget extends StatelessWidget {
   final IconData icon;
   final String title;
