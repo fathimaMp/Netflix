@@ -7,11 +7,11 @@ class ScreenHome extends StatelessWidget {
   const ScreenHome({super.key});
 
   final String dummyImage =
-      'https://media.themoviedb.org/t/p/w440_and_h660_face/5rhTDKUhPYvpdQIijFIs5VoWsON.jpg';
+      "https://image.tmdb.org/t/p/w500/q7fXcrDPJcf6t3rzutaNwTzuKP1.jpg";
 
   // You can replace this with the actual Shyam Singha Roy poster URL later
   final String heroImage =
-      'https://media.themoviedb.org/t/p/w600_and_h900_bestv2/vVpEoPeCGYvFeVGc6j62N78Btc8.jpg'; 
+      "https://image.tmdb.org/t/p/w500/q7fXcrDPJcf6t3rzutaNwTzuKP1.jpg"; 
 
   @override
   Widget build(BuildContext context) {
