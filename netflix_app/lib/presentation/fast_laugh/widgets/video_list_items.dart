@@ -30,7 +30,7 @@ class VideoListItem extends StatelessWidget {
           left: 20,
           child: CircleAvatar(
             radius: 22,
-            backgroundColor: Colors.black.withOpacity(0.6),
+            backgroundColor: Colors.black.withValues(alpha: 0.6),
             child: IconButton(
               onPressed: () {},
               icon: const Icon(Icons.volume_off, color: Colors.white, size: 20),

@@ -133,7 +133,7 @@ class _EveryonesWatchingWidget extends StatelessWidget {
               bottom: 10,
               right: 10,
               child: CircleAvatar(
-                backgroundColor: Colors.black.withOpacity(0.5),
+                backgroundColor: Colors.black.withValues(alpha: 0.5),
                 radius: 20,
                 child: const Icon(
                   Icons.volume_off,
@@ -293,7 +293,7 @@ class _ComingSoonWidget extends StatelessWidget {
                     bottom: 10,
                     right: 10,
                     child: CircleAvatar(
-                      backgroundColor: Colors.black.withOpacity(0.5),
+                      backgroundColor: Colors.black.withValues(alpha: 0.5),
                       radius: 20,
                       child: const Icon(
                         Icons.volume_off,

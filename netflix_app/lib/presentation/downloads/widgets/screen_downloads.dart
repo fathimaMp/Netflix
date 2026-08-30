@@ -1,21 +1,27 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:netflix_app/application/downloads/downloads_bloc.dart';
 import 'package:netflix_app/core/colours/colors.dart';
 import 'package:netflix_app/presentation/widgets/app_bar_widget.dart';
 
 class ScreenDownloads extends StatelessWidget {
-  ScreenDownloads({Key? key}) : super(key: key);
+  ScreenDownloads({super.key});
 
   final List<String> imageList = [
-    "https://media.themoviedb.org/t/p/w440_and_h660_face/AnJ8IQJI23hNpYXVNaythu061Ru.jpg",
-    "https://media.themoviedb.org/t/p/w440_and_h660_face/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg",
-    "https://media.themoviedb.org/t/p/w440_and_h660_face/j91LJmcWo16CArFOoapsz84bwxb.jpg",
+    "https://image.tmdb.org/t/p/w500",
+    "https://image.tmdb.org/t/p/w500",
+    "https://image.tmdb.org/t/p/w500",
   ];
 
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
+    WidgetsBinding.instance!.addPostFrameCallback((_) {
+      
+      BlocProvider.of<DownloadsBloc>(context).add(const DownloadsEvent.getDownloadsImage());
+    },);
 
     return Scaffold(
       appBar: const PreferredSize(
@@ -56,7 +62,7 @@ class ScreenDownloads extends StatelessWidget {
                 // 1. Background Circle
                 CircleAvatar(
                   radius: size.width * 0.38,
-                  backgroundColor: Colors.grey.withOpacity(0.2),
+                  backgroundColor: Colors.grey.withValues(alpha: 0.2),
                 ),
 
                 // 2. Left Rotated Poster

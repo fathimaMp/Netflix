@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:netflix_app/core/colours/colors.dart';
 import 'package:netflix_app/presentation/downloads/widgets/screen_downloads.dart';
 import 'package:netflix_app/presentation/fast_laugh/fast_laugh.dart';
 import 'package:netflix_app/presentation/home/screen_home.dart';

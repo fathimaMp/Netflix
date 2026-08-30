@@ -6,8 +6,8 @@ part of 'downloads.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$DownloadsImpl _$$DownloadsImplFromJson(Map<String, dynamic> json) =>
-    _$DownloadsImpl(posterPath: json['poster_path'] as String);
+_Downloads _$DownloadsFromJson(Map<String, dynamic> json) =>
+    _Downloads(posterPath: json['poster_path'] as String?);
 
-Map<String, dynamic> _$$DownloadsImplToJson(_$DownloadsImpl instance) =>
+Map<String, dynamic> _$DownloadsToJson(_Downloads instance) =>
     <String, dynamic>{'poster_path': instance.posterPath};

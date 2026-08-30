@@ -25,7 +25,7 @@ class _ScreenSearchState extends State<ScreenSearch> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CupertinoSearchTextField(
-                backgroundColor: Colors.grey.withOpacity(0.3),
+                backgroundColor: Colors.grey.withValues(alpha: 0.3),
                 prefixIcon: const Icon(CupertinoIcons.search, color: Colors.grey),
                 suffixIcon: const Icon(CupertinoIcons.xmark_circle_fill, color: Colors.grey),
                 style: const TextStyle(color: Colors.white),
