@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:netflix_app/core/strings.dart';
 import 'package:netflix_app/domain/api_end_points.dart';
 import 'package:netflix_app/domain/catalog/catalog_title.dart';
 import 'package:netflix_app/infrastructure/api_key.dart';
@@ -41,6 +42,42 @@ class TmdbCatalogRepository {
         'sort_by': 'popularity.desc',
         'with_origin_country': 'IN',
       });
+
+  Future<Uri?> trailerUri(CatalogTitle title) async {
+    if (API_KEY.isEmpty) {
+      throw const TmdbRequestException(
+        'TMDB API key is missing. Start Flutter with --dart-define=TMDB_API_KEY=your_key.',
+      );
+    }
+    final mediaType = title.mediaType == 'tv' ? 'tv' : 'movie';
+    try {
+      final response = await _dio.get<dynamic>(
+        '$KBaseUrl/$mediaType/${title.id}/videos',
+        queryParameters: ApiEndPoints.defaultQueryParameters,
+      );
+      final data = response.data;
+      if (data is! Map || data['results'] is! List) return null;
+
+      final videos = (data['results'] as List).whereType<Map>();
+      final candidates = videos.where((video) =>
+          video['site'] == 'YouTube' &&
+          (video['type'] == 'Trailer' || video['type'] == 'Teaser') &&
+          video['key'] is String &&
+          (video['key'] as String).isNotEmpty);
+      final matches = candidates.toList();
+      if (matches.isEmpty) return null;
+      final trailer = matches.where((video) => video['type'] == 'Trailer').toList();
+      final key = (trailer.isNotEmpty ? trailer.first : matches.first)['key'] as String;
+      return Uri.https('www.youtube.com', '/watch', {'v': key});
+    } on DioException catch (error) {
+      final status = error.response?.statusCode;
+      if (status == 401 || status == 403) {
+        throw const TmdbRequestException('TMDB rejected the API key. Check that it is active.');
+      }
+      if (status != null) throw TmdbRequestException('TMDB trailer request failed (HTTP $status).');
+      throw const TmdbRequestException('Could not reach TMDB to load the trailer.');
+    }
+  }
 
   Future<List<CatalogTitle>> search(String query) async {
     final term = query.trim();
