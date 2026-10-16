@@ -4,24 +4,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:netflix_app/application/downloads/downloads_bloc.dart';
 import 'package:netflix_app/core/colours/colors.dart';
+import 'package:netflix_app/domain/api_end_points.dart';
 import 'package:netflix_app/presentation/widgets/app_bar_widget.dart';
 
 class ScreenDownloads extends StatelessWidget {
   ScreenDownloads({super.key});
 
-  final List<String> imageList = [
-    "https://image.tmdb.org/t/p/w500",
-    "https://image.tmdb.org/t/p/w500",
-    "https://image.tmdb.org/t/p/w500",
-  ];
-
   @override
   Widget build(BuildContext context) {
     final Size size = MediaQuery.of(context).size;
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      
-      BlocProvider.of<DownloadsBloc>(context).add(const DownloadsEvent.getDownloadsImage());
-    },);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final bloc = BlocProvider.of<DownloadsBloc>(context);
+      if (bloc.state.downloads.isEmpty && !bloc.state.isLoading) {
+        bloc.add(const DownloadsEvent.getDownloadsImage());
+      }
+    });
 
     return Scaffold(
       appBar: const PreferredSize(
@@ -65,28 +62,73 @@ class ScreenDownloads extends StatelessWidget {
                   backgroundColor: Colors.grey.withValues(alpha: 0.2),
                 ),
 
-                // 2. Left Rotated Poster
-                DownloadsImageWidget(
-                  imageList: imageList[0],
-                  angle: -20 * pi / 180,
-                  margin: EdgeInsets.only(right: size.width * 0.35, bottom: 20),
-                  size: size,
-                ),
-
-                // 3. Right Rotated Poster
-                DownloadsImageWidget(
-                  imageList: imageList[1],
-                  angle: 20 * pi / 180,
-                  margin: EdgeInsets.only(left: size.width * 0.35, bottom: 20),
-                  size: size,
-                ),
-
-                // 4. Center Straight Poster
-                DownloadsImageWidget(
-                  imageList: imageList[2],
-                  angle: 0,
-                  margin: const EdgeInsets.only(bottom: 0),
-                  size: size,
+                BlocBuilder<DownloadsBloc, DownloadsState>(
+                  builder: (context, state) {
+                    if (state.isLoading && state.downloads.isEmpty) {
+                      return const CircularProgressIndicator(color: Colors.white);
+                    }
+                    final posters = state.downloads
+                        .take(3)
+                        .map((item) => item.posterPath == null
+                            ? ''
+                            : '${ApiEndPoints.imageBaseUrl}${item.posterPath}')
+                        .toList(growable: false);
+                    if (posters.isEmpty) {
+                      final failed = state.downloadsFailureOrSuccessOption
+                          .fold(() => false, (result) => result.isLeft());
+                      return Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            failed ? Icons.cloud_off_outlined : Icons.movie_outlined,
+                            color: Colors.white54,
+                            size: 64,
+                          ),
+                          if (failed) ...[
+                            const SizedBox(height: 12),
+                            const Text(
+                              'Could not load posters. Check your connection and TMDB API key.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: Colors.white70),
+                            ),
+                            TextButton(
+                              onPressed: () => context
+                                  .read<DownloadsBloc>()
+                                  .add(const DownloadsEvent.getDownloadsImage()),
+                              child: const Text('Retry'),
+                            ),
+                          ],
+                        ],
+                      );
+                    }
+                    return Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        if (posters.length > 1)
+                          DownloadsImageWidget(
+                            imageList: posters[1],
+                            angle: -20 * pi / 180,
+                            margin: EdgeInsets.only(
+                                right: size.width * 0.35, bottom: 20),
+                            size: size,
+                          ),
+                        if (posters.length > 2)
+                          DownloadsImageWidget(
+                            imageList: posters[2],
+                            angle: 20 * pi / 180,
+                            margin: EdgeInsets.only(
+                                left: size.width * 0.35, bottom: 20),
+                            size: size,
+                          ),
+                        DownloadsImageWidget(
+                          imageList: posters.first,
+                          angle: 0,
+                          margin: const EdgeInsets.only(bottom: 0),
+                          size: size,
+                        ),
+                      ],
+                    );
+                  },
                 ),
               ],
             ),
@@ -148,11 +190,17 @@ class DownloadsImageWidget extends StatelessWidget {
         margin: margin,
         width: size.width * 0.38,
         height: size.width * 0.52,
+        clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
+          color: Colors.grey.shade900,
           borderRadius: BorderRadius.circular(10),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkImage(imageList),
+        ),
+        child: Image.network(
+          imageList,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) => const Center(
+            child: Icon(Icons.broken_image_outlined,
+                color: Colors.white54, size: 36),
           ),
         ),
       ),

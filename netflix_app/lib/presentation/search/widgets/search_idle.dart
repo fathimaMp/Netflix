@@ -1,91 +1,57 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
+import 'package:netflix_app/domain/catalog/catalog_title.dart';
+import 'package:netflix_app/infrastructure/catalog/tmdb_catalog_repository.dart';
 
-
-// Landscape image for wide thumbnail display
-const imageUrl =
-  "https://image.tmdb.org/t/p/w500/q7fXcrDPJcf6t3rzutaNwTzuKP1.jpg";
-
-class SearchIdleWidgets extends StatelessWidget {
+class SearchIdleWidgets extends StatefulWidget {
   const SearchIdleWidgets({super.key});
-
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text(
-          "Top Searches",
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 22,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Expanded(
-          child: ListView.separated(
-            shrinkWrap: true,
-            itemBuilder: (ctx, index) => const TopSearchItemTile(),
-            separatorBuilder: (ctx, index) => const SizedBox(height: 10),
-            itemCount: 10,
-          ),
-        ),
-      ],
-    );
-  }
+  State<SearchIdleWidgets> createState() => _SearchIdleWidgetsState();
 }
 
-// Tile widget for each search item
-class TopSearchItemTile extends StatelessWidget {
-  const TopSearchItemTile({super.key});
+class _SearchIdleWidgetsState extends State<SearchIdleWidgets> {
+  late final Future<List<CatalogTitle>> _titles = TmdbCatalogRepository().trending();
 
   @override
-  Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text('Top Searches', style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 10),
+          Expanded(
+            child: FutureBuilder<List<CatalogTitle>>(
+              future: _titles,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) return Center(child: Text(snapshot.error.toString(), textAlign: TextAlign.center, style: const TextStyle(color: Colors.white70)));
+                if (!snapshot.hasData) return const Center(child: CircularProgressIndicator(color: Colors.white));
+                final titles = snapshot.data!.where((title) => title.backdropUrl != null).toList();
+                if (titles.isEmpty) return const Center(child: Text('No trending titles found.', style: TextStyle(color: Colors.white70)));
+                return ListView.separated(
+                  itemCount: titles.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 10),
+                  itemBuilder: (context, index) => _TopSearchItem(title: titles[index]),
+                );
+              },
+            ),
+          ),
+        ],
+      );
+}
 
-    return Row(
-      children: [
-        Container(
-          width: screenWidth * 0.35,
-          height: 70,
-          decoration: BoxDecoration(
+class _TopSearchItem extends StatelessWidget {
+  const _TopSearchItem({required this.title});
+  final CatalogTitle title;
+
+  @override
+  Widget build(BuildContext context) => Row(
+        children: [
+          ClipRRect(
             borderRadius: BorderRadius.circular(5),
-            image: const DecorationImage(
-              fit: BoxFit.cover,
-              image: NetworkImage(imageUrl),
-            ),
+            child: Image.network(title.backdropUrl!, width: MediaQuery.sizeOf(context).width * .35, height: 70, fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(width: MediaQuery.sizeOf(context).width * .35, height: 70, color: Colors.grey.shade900)),
           ),
-        ),
-        const SizedBox(width: 10),
-        const Expanded(
-          child: Text(
-            "Movie Name",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
-            ),
-          ),
-        ),
-        const Icon(
-          Icons.play_circle_outline,
-          color: Colors.white,
-          size: 35,
-        ),
-      ],
-    );
-  }
-}
-
-
-void checkConnection() async {
-  try {
-    final result = await InternetAddress.lookup('media.themoviedb.org');
-    if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
-      print('Internet connected!');
-    }
-  } on SocketException catch (_) {
-    print('No internet connection on emulator');
-  }
+          const SizedBox(width: 10),
+          Expanded(child: Text(title.name, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16))),
+          const Icon(Icons.play_circle_outline, color: Colors.white, size: 35),
+        ],
+      );
 }

@@ -1,1 +1,2 @@
-const API_KEY = "4de9d4cb6bf4caa3da320e10e3fef248";
+/// Provide this at build/run time with --dart-define=TMDB_API_KEY=your_key.
+const API_KEY = String.fromEnvironment('TMDB_API_KEY');

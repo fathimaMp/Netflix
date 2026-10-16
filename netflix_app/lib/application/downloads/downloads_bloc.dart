@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:bloc/bloc.dart';
 import 'package:dartz/dartz.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -25,10 +23,8 @@ class DownloadsBloc extends Bloc<DownloadsEvent, DownloadsState> {
       ));
 
       // 2. Fetch data from repository
-      final Either<MainFailure, Downloads> downloadsOption =
+      final Either<MainFailure, List<Downloads>> downloadsOption =
           await _downloadsRepo.getDownloadsImages();
-      log(downloadsOption.toString() as num);
-
 
       // 3. Emit updated state with success or failure wrapped in Some()
       emit(
@@ -39,7 +35,8 @@ class DownloadsBloc extends Bloc<DownloadsEvent, DownloadsState> {
           ),
           (success) => state.copyWith(
             isLoading: false,
-            downloadsFailureOrSuccessOption: Some(Right(success as List<Downloads>)),
+            downloads: success,
+            downloadsFailureOrSuccessOption: Some(Right(success)),
           ),
         ),
       );
