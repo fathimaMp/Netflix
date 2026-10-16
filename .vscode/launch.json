@@ -29,6 +29,9 @@
             "cwd": "netflix_app",
             "request": "launch",
             "type": "dart",
+            "args": [
+                "--dart-define=TMDB_API_KEY=4de9d4cb6bf4caa3da320e10e3fef248"
+            ],
             "flutterMode": "release"
         }
     ]

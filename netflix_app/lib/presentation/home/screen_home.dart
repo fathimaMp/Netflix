@@ -26,7 +26,7 @@ class _ScreenHomeState extends State<ScreenHome> {
             builder: (context, snapshot) {
               final titles = snapshot.data;
               final hero = titles != null && titles.isNotEmpty ? titles.first : null;
-              return _hero(hero, snapshot.error);
+              return _hero(hero, snapshot.error, snapshot.connectionState == ConnectionState.waiting);
             },
           ),
           CatalogFutureSection(
@@ -50,7 +50,7 @@ class _ScreenHomeState extends State<ScreenHome> {
     );
   }
 
-  Widget _hero(CatalogTitle? title, Object? error) {
+  Widget _hero(CatalogTitle? title, Object? error, bool isLoading) {
     final imageUrl = title?.backdropUrl;
     return SizedBox(
       height: 580,
@@ -78,12 +78,22 @@ class _ScreenHomeState extends State<ScreenHome> {
             child: Column(
               children: [
                 Text(
-                  title?.name ?? (error == null ? 'Loading titles…' : 'TMDB catalog unavailable'),
+                  title?.name ?? (isLoading ? 'Loading titles…' : 'TMDB catalog unavailable'),
                   maxLines: 2,
                   textAlign: TextAlign.center,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold),
                 ),
+                if (title == null && error != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    error.toString(),
+                    maxLines: 2,
+                    textAlign: TextAlign.center,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                ],
                 if (title != null) ...[
                   const SizedBox(height: 10),
                   Text(
